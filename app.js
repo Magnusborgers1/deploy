@@ -1,6 +1,7 @@
+require('dotenv').config();
+
 const express = require('express');
 const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -10,7 +11,6 @@ const participantsRoutes = require('./routes/participants');
 const app = express();
 const port = process.env.PORT || 3000;
 
-dotenv.config();
 app.use(bodyParser.json());
 
 AWS.config.update({
