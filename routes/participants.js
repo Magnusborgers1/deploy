@@ -46,5 +46,5 @@ router.get('/', (req, res) => {
 });
 
 
-
+console.log('added participant router');
 module.exports = router;
