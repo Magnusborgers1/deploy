@@ -7,7 +7,7 @@ const AWS = require('aws-sdk');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authenticateAdmin = require('./authenticate');  
-const participantsRoutes = require('./routes/participants');
+const participantsRoutes = require('./rooutes/participants');
 
 const app = express();
 const port = process.env.PORT || 3000;
