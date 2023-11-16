@@ -1,3 +1,4 @@
+console.log('Server boot');
 require('dotenv').config();
 
 const express = require('express');
