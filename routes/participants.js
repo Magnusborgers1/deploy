@@ -5,6 +5,7 @@ const authenticateAdmin = require('../authenticate');
 
 // Endpoint to add participant
 router.post('/add', (req, res) => {
+  console.log('Entered participants/add post call');
   const participantData = req.body;
   const { email, firstname, lastname, dob, active, work, home } = participantData;
 

@@ -2,13 +2,16 @@ const bcrypt = require('bcrypt');
 
 const authenticateAdmin = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  
+  console.log('Entered authenticateAdmin');
   if (!authHeader || !authHeader.startsWith('Basic ')) {
     return res.status(401).json({ error: 'Unauthorized - Missing or invalid credentials.' });
   }
 
   const credentials = Buffer.from(authHeader.split(' ')[1], 'base64').toString('ascii').split(':');
 
+
+  console.log('un' + credentials[0] + ' pw ' + credentials[1]);
+  
   let test1 = credentials[0] === 'admin' ;
   let test2 = bcrypt.compareSync(credentials[1], 'P4ssword');
 
