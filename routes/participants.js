@@ -145,13 +145,43 @@ router.put("/:email", async (req, res) => {
     return res.status(404).json({error: 'User is not found.'})
   }
 
-  const {email, firstName, lastName, age} = req.body;
+  const participantData = req.body;
+  const { email, firstname, lastname, dob, active, work, home } =
+    participantData;
+
+  if ( !email || !firstname || !lastname || !dob || active === undefined || !work || !home ) {
+    return res
+      .status(400)
+      .json({ error: "Incomplete participant data. All fields are required." });
+  }
+
   await participants.set(email, {
-    firstName: firstName,
-    secondName: lastName,
-    age: age
-  })
-  res.end();
+    firstName: firstname,
+    secondName: lastname,
+    dob: dob,
+    active: active,
+  });
+
+  await participants.item(email).fragment("home").set({
+    country: home.country,
+    city: home.city,
+  });
+
+  await participants.item(email).fragment("work").set({
+    companyname: work.companyname,
+    salary: work.salary,
+    currency: work.currency,
+  });
+
+  return res.end();
+
+  // const {email, firstName, lastName, age} = req.body;
+  // await participants.set(email, {
+  //   firstName: firstName,
+  //   secondName: lastName,
+  //   age: age
+  // })
+  // res.end();
 
   return;
   const params = {
@@ -189,20 +219,11 @@ router.put("/:email", async (req, res) => {
 
 // Endpoint to add participant
 router.post("/add", async (req, res) => {
-  console.log("Entered participants/add post call");
   const participantData = req.body;
   const { email, firstname, lastname, dob, active, work, home } =
     participantData;
 
-  if (
-    !email ||
-    !firstname ||
-    !lastname ||
-    !dob ||
-    active === undefined ||
-    !work ||
-    !home
-  ) {
+  if ( !email || !firstname || !lastname || !dob || active === undefined || !work || !home ) {
     return res
       .status(400)
       .json({ error: "Incomplete participant data. All fields are required." });
