@@ -9,6 +9,13 @@ let participants = db.collection("participants");
 // Endpoint to get all participants
 router.get("/", async (req, res) => {
   let list = await participants.filter();
+  list = list.results.filter(function (p) {
+    if (p.constructor.name === "CyclicItem" && p.props.active === true) {
+      return true;
+    }
+    return false;
+  });
+
   res.send(list);
 });
 
@@ -19,7 +26,6 @@ router.get("/details/deleted", async (req, res) => {
     return element.props.active === false;
   });
   return res.send(list);
-  return res.status(500).json({ error: "." });
 });
 
 router.get("/details/:email", async (req, res) => {
@@ -67,29 +73,7 @@ router.get("/work/:email", async (req, res) => {
     return res.status(400).json({ error: "Participants has no workFragment" });
   }
   return res.send(workFragment[0]);
-  return;
-
-  try {
-    let participant = await participants.get(emailToFetch);
-    if (!participant) {
-      return res.status(404).json({ error: "Participant not found" });
-    }
-
-    if (!participant.work || participant.work.deleted) {
-      return res.status(404).json({ error: "Work details not found." });
-    }
-    filteredWorkDetails = participant.work.filter((workItem) => {
-      // legge til conditions her?
-      return !workItem.deleted;
-    });
-
-    res.json({ workDetails: filteredWorkDetails });
-  } catch (error) {
-    console.error("Error fetching work details from the database:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to fetch work details from the database." });
-  }
+  
 });
 
 router.get("/home/:email", async (req, res) => {
@@ -149,7 +133,9 @@ router.put("/:email", async (req, res) => {
   const { email, firstname, lastname, dob, active, work, home } =
     participantData;
 
-  if ( !email || !firstname || !lastname || !dob || active === undefined ||
+  let dateValidated = dob.match(/^\d{4}\/\d{2}\/\d{2}$/);
+
+  if ( !email || !firstname || !lastname || !dob  || !dateValidated || active === undefined ||
     !work || !work.salary|| !work.currency || !work.companyname|| 
     !home || !home.country || !home.city) {
     return res
@@ -175,48 +161,7 @@ router.put("/:email", async (req, res) => {
     currency: work.currency,
   });
 
-  return res.end();
-
-  // const {email, firstName, lastName, age} = req.body;
-  // await participants.set(email, {
-  //   firstName: firstName,
-  //   secondName: lastName,
-  //   age: age
-  // })
-  // res.end();
-
-  return;
-  const params = {
-    TableName: tableName,
-    Key: {
-      email: emailToUpdate,
-    },
-    UpdateExpression:
-      "SET firstname = :firstname, lastname = :lastname, dob = :dob, active = :active, work = :work, home = :home",
-    ExpressionAttributeValues: {
-      ":firstname": updatedParticipantData.firstname,
-      ":lastname": updatedParticipantData.lastname,
-      ":dob": updatedParticipantData.dob,
-      ":active": updatedParticipantData.active,
-      ":work": updatedParticipantData.work,
-      ":home": updatedParticipantData.home,
-    },
-    ReturnValues: "ALL_NEW",
-  };
-
-  dynamoDB.update(params, (error, data) => {
-    if (error) {
-      console.error("Error updating participant in the database:", error);
-      return res
-        .status(500)
-        .json({ error: "Failed to update participant in the database." });
-    }
-
-    res.json({
-      message: "Participant updated successfully",
-      updatedParticipant: data.Attributes,
-    });
-  });
+  return res.status(200).json({ok: "user updated"});
 });
 
 // Endpoint to add participant
@@ -224,8 +169,9 @@ router.post("/add", async (req, res) => {
   const participantData = req.body;
   const { email, firstname, lastname, dob, active, work, home } =
     participantData;
+  let dateValidated = dob.match(/^\d{4}\/\d{2}\/\d{2}$/);
 
-  if ( !email || !firstname || !lastname || !dob || active === undefined ||
+  if ( !email || !firstname || !lastname || !dob || !dateValidated || active === undefined ||
       !work || !work.salary|| !work.currency || !work.companyname|| 
       !home || !home.country || !home.city) {
     return res
@@ -263,7 +209,9 @@ router.post("/add", async (req, res) => {
     currency: work.currency,
   });
 
-  return res.end();
+  let test = participants.list();
+
+  return res.status(200).json({ok: "user added"});
 });
 
 // Endpoint to delete participant by email
@@ -286,8 +234,15 @@ router.delete("/:email", async (req, res) => {
   if (userExist.length === 0) {
     return res.status(404).json({error: 'User is not found.'})
   }
-  await participants.delete(emailToDelete);
-  res.end();
+
+  if (!userExist[0].props.active) {
+    return res.status(400).json({error: 'User is already \'deleted\''});
+  }
+  // await participants.delete(emailToDelete);
+  await participants.set(emailToDelete, {
+    active: false
+  });
+  return res.status(200).json({ok: "user 'deleted'"});
 });
 
 // Function to validate email format (kanskje forbedre?)
