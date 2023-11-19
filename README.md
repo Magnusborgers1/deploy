@@ -1,1 +1,16 @@
-# deploy
+# Link to Cyclic.sh: https://wandering-boa-gear.cyclic.app/
+
+# Copy of .env file: 
+PORT=3000
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=P4ssword
+#CYCLIC_BUCKET_NAME=cyclic-wandering-boa-gear-eu-north-1
+CYCLIC_APP_ID=wandering-boa-gear
+CYCLIC_URL=https://wandering-boa-gear.cyclic.app
+DYNAMODB_TABLE_NAME=deploy
+CYCLIC_DB=wandering-boa-gearCyclicDB
+
+ AWS_REGION="eu-north-1"
+ AWS_ACCESS_KEY_ID="ASIAZSGXRBLO3U5EMMUW"
+ AWS_SECRET_ACCESS_KEY="AAaUjqMSiOjLIfibnsb+A7i5Nz90VT9ptt88ZoWS"
+ AWS_SESSION_TOKEN="IQoJb3JpZ2luX2VjEJD//////////wEaCXVzLWVhc3QtMiJGMEQCIGpnq4LKHDhnzpoeQV0d1g6AhU6ZBh2hg0Nm+mH8MDHDAiA50MiFXj1BxiBXatq2guGWmhcgpWzVRs+O3ezxe7g4jCq1Agja//////////8BEAAaDDY1NzU4MjAwMDg2MSIMWLGJ6KOGonymhdDEKokCWIFKnAb+fjAIzY5wVDES4sSIDP+v3qEjCr21qHHcYQSqH4PQiPG8ANc3iDqHChbJaC//cu/QfOv0C+/jL7188b8JLpj2un2OgcDJyP84e8A3v744HIt7FDnLTDYHZ6Om4ZhbJjicIZLJ594U3a9mYgtzsTKG3evyac7aD5NO/uhRcXuVFQCcIKOnj2ngFYUojsNpqxCPFsjPFXYPgBbxn8fqw7YlwGn6j0pth36ayx1hYv/aBJffoGdIvspqEjUg9PZhKoJrLG4OeDeGcsh8GmHmFeBQSm4Q+q/5TLdGAfiXXYNMXHD0FH1oKyg5GCEukwMDDyQHtkLNVNA+J93fCszJcdehoE+x2jDF7uiqBjqeAZobjEF+Sw4oe6POA6TeJ6TvzI5Lxty2xPbHeJVgdC1RAOAgj6ITglf0oUJmK0Srm4iEvl3auAM8eMkLNgGRDsDclfSoL9JZhdkZ3l9tzrzwE7NMVC5ryrD6rpfKp0C+ANbIZinamD3j2uwpz001cdouw60gF+Beq9JWQZCgcilwjGMfK+Mp5X5gzllmJC9qdQG4NvDPSf204ENcTz4W"

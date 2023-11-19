@@ -1,12 +1,10 @@
 const express = require("express");
 const router = express.Router();
-// const { dynamoDB, tableName } = require('../db');
 const authenticateAdmin = require("../authenticate");
 const CyclicDB = require("@cyclic.sh/dynamodb");
 const db = CyclicDB(process.env.CYCLIC_DB);
 let participants = db.collection("participants");
 
-// Endpoint to get all participants
 router.get("/", async (req, res) => {
   let list = await participants.filter();
   list = list.results.filter(function (p) {
@@ -19,9 +17,8 @@ router.get("/", async (req, res) => {
   res.send(list);
 });
 
-// Get deleted participants, only firstname & last name
 router.get("/details/deleted", async (req, res) => {
-  let response = await participants.filter(); //TODO how to filter
+  let response = await participants.filter(); 
   let list = response.results.filter(function (element) {
     return element.props.active === false;
   });
@@ -112,7 +109,6 @@ router.put("/:email", async (req, res) => {
   let emailToFetch = req.params.email;
   const updatedParticipantData = req.body;
 
-  // Validate email format (kanskje forbedre?)
   if (!validateEmail(emailToFetch)) {
     return res.status(400).json({ error: "Invalid email format." });
   }
@@ -164,7 +160,6 @@ router.put("/:email", async (req, res) => {
   return res.status(200).json({ok: "user updated"});
 });
 
-// Endpoint to add participant
 router.post("/add", async (req, res) => {
   const participantData = req.body;
   const { email, firstname, lastname, dob, active, work, home } =
@@ -214,11 +209,9 @@ router.post("/add", async (req, res) => {
   return res.status(200).json({ok: "user added"});
 });
 
-// Endpoint to delete participant by email
 router.delete("/:email", async (req, res) => {
   const emailToDelete = req.params.email; 
 
-  // Validate email
   if (!validateEmail(emailToDelete)) {
     return res.status(400).json({ error: "Invalid email format." });
   }
@@ -238,14 +231,13 @@ router.delete("/:email", async (req, res) => {
   if (!userExist[0].props.active) {
     return res.status(400).json({error: 'User is already \'deleted\''});
   }
-  // await participants.delete(emailToDelete);
+
   await participants.set(emailToDelete, {
     active: false
   });
   return res.status(200).json({ok: "user 'deleted'"});
 });
 
-// Function to validate email format (kanskje forbedre?)
 function validateEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
