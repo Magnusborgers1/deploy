@@ -149,7 +149,9 @@ router.put("/:email", async (req, res) => {
   const { email, firstname, lastname, dob, active, work, home } =
     participantData;
 
-  if ( !email || !firstname || !lastname || !dob || active === undefined || !work || !home ) {
+  if ( !email || !firstname || !lastname || !dob || active === undefined ||
+    !work || !work.salary|| !work.currency || !work.companyname|| 
+    !home || !home.country || !home.city) {
     return res
       .status(400)
       .json({ error: "Incomplete participant data. All fields are required." });
@@ -223,7 +225,9 @@ router.post("/add", async (req, res) => {
   const { email, firstname, lastname, dob, active, work, home } =
     participantData;
 
-  if ( !email || !firstname || !lastname || !dob || active === undefined || !work || !home ) {
+  if ( !email || !firstname || !lastname || !dob || active === undefined ||
+      !work || !work.salary|| !work.currency || !work.companyname|| 
+      !home || !home.country || !home.city) {
     return res
       .status(400)
       .json({ error: "Incomplete participant data. All fields are required." });
@@ -237,7 +241,7 @@ router.post("/add", async (req, res) => {
   var keyExist = await testprop.results.filter(function (element, e = email) {
     return element.key === email;
   });
-  if (keyExist.key) {
+    if (keyExist.length > 0) {
     return res.status(400).json({ error: "user exists." });
   }
 
@@ -264,11 +268,23 @@ router.post("/add", async (req, res) => {
 
 // Endpoint to delete participant by email
 router.delete("/:email", async (req, res) => {
-  const emailToDelete = req.params.email;
+  const emailToDelete = req.params.email; 
 
   // Validate email
   if (!validateEmail(emailToDelete)) {
     return res.status(400).json({ error: "Invalid email format." });
+  }
+
+  let response = await participants.filter();
+  let userExist = response.results.filter(function (p, e = emailToDelete) {
+    if (p.constructor.name === "CyclicItem" && p.key === emailToDelete) {
+      return true;
+    }
+    return false;
+  });
+  
+  if (userExist.length === 0) {
+    return res.status(404).json({error: 'User is not found.'})
   }
   await participants.delete(emailToDelete);
   res.end();
